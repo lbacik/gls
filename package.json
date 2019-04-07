@@ -1,0 +1,16 @@
+{
+  "name": "@lbacik/gls",
+  "version": "0.0.1",
+  "author": "Łukasz Bacik <mail@luka.sh> (http://luka.sh)",
+  "license": "LGPL-2.1-or-later",
+  "main": "",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

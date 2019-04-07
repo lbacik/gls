@@ -1,222 +1,221 @@
-
 const WormData = require('./worm_data')
 
 class Worm {
 
-    constructor(data, drawer) {
-        this.data = WormData.validate(data)
-        this.head = this.data.head
-        this.drawer = drawer
+  constructor(data, drawer) {
+    this.data = WormData.validate(data)
+    this.head = this.data.head
+    this.drawer = drawer
+  }
+
+  data(data = null) {
+    if (data !== null) {
+      this.data = WormData.validate(data)
     }
 
-    data(data = null) {
-        if (data !== null) {
-            this.data = WormData.validate(data)
+    return this.data
+  }
+
+  getNextPoint(i) {
+    const path = this.data.path
+
+    if (this.data.direction === true) {
+      i = (i + 1) % path.length
+    } else {
+      i = Math.abs(path.length - (i + 1)) % path.length
+    }
+
+    return path[i]
+  }
+
+  choseTheLineThanHeadLiesOn(head) {
+    let point = this.data.path[0]
+    let next
+
+    for (let i = 0; i <= this.data.path.length; i = i + 1) {
+
+      next = this.getNextPoint(i)
+
+      // console.log('h: ' + head + ', p: ' + point + ', n: ' + next)
+
+      if (head[0] === point[0]) {
+
+        if (this.pointOnLine(point[1], next[1], head[1])) {
+          return [point, next]
         }
 
-        return this.data
-    }
+      } else if (head[1] === point[1]) {
 
-    getNextPoint(i) {
-        const path = this.data.path
-
-        if (this.data.direction === true) {
-            i = (i + 1) % path.length
-        } else {
-            i = Math.abs(path.length - (i + 1)) % path.length
+        if (this.pointOnLine(point[0], next[0], head[0])) {
+          return [point, next]
         }
+      }
 
-        return path[i]
+      point = next;
     }
 
-    choseTheLineThanHeadLiesOn(head) {
-        let point = this.data.path[0]
-        let next
+    return undefined
+  }
 
-        for (let i = 0; i <= this.data.path.length; i = i + 1) {
+  choseLineWhichStartsOn(point) {
+    let start = this.data.path[0]
+    let next
 
-            next = this.getNextPoint(i)
+    for (let i = 0; i <= this.data.path.length; i = i + 1) {
 
-            // console.log('h: ' + head + ', p: ' + point + ', n: ' + next)
+      next = this.getNextPoint(i)
 
-            if (head[0] === point[0]) {
+      if (start[0] === point[0] && start[1] === point[1]) {
+        return [start, next]
+      }
 
-                if (this.pointOnLine(point[1], next[1], head[1])) {
-                    return [point, next]
-                }
-
-            } else if (head[1] === point[1]) {
-
-                if (this.pointOnLine(point[0], next[0], head[0])) {
-                    return [point, next]
-                }
-            }
-
-            point = next;
-        }
-
-        return undefined
+      start = next;
     }
 
-    choseLineWhichStartsOn(point) {
-        let start = this.data.path[0]
-        let next
+    return undefined
+  }
 
-        for (let i = 0; i <= this.data.path.length; i = i + 1) {
+  choseLineWhichEndsOn(point) {
+    let start = this.data.path[0]
+    let next
 
-            next = this.getNextPoint(i)
+    for (let i = 0; i <= this.data.path.length; i = i + 1) {
 
-            if (start[0] === point[0] && start[1] === point[1]) {
-                return [start, next]
-            }
+      next = this.getNextPoint(i)
 
-            start = next;
-        }
+      if (next[0] === point[0] && next[1] === point[1]) {
+        return [start, next]
+      }
 
-        return undefined
+      start = next;
     }
 
-    choseLineWhichEndsOn(point) {
-        let start = this.data.path[0]
-        let next
+    return undefined
+  }
 
-        for (let i = 0; i <= this.data.path.length; i = i + 1) {
+  drawWormLine(startPoint, line, length) {
+    let tailDestinationPoint = this.pointOnOppositeEnd(line)
+    let dimensionIndex = this.getDimensionIndex(line)
+    let lineLength = Math.abs(tailDestinationPoint[dimensionIndex] - startPoint[dimensionIndex])
 
-            next = this.getNextPoint(i)
-
-            if (next[0] === point[0] && next[1] === point[1]) {
-                return [start, next]
-            }
-
-            start = next;
-        }
-
-        return undefined
+    if (length < lineLength) {
+      if (tailDestinationPoint[dimensionIndex] < startPoint[dimensionIndex]) {
+        tailDestinationPoint[dimensionIndex] = startPoint[dimensionIndex] - length
+      } else {
+        tailDestinationPoint[dimensionIndex] = startPoint[dimensionIndex] + length
+      }
+      lineLength = length
     }
 
-    drawWormLine(startPoint, line, length) {
-        let tailDestinationPoint = this.pointOnOppositeEnd(line)
-        let dimensionIndex = this.getDimensionIndex(line)
-        let lineLength = Math.abs(tailDestinationPoint[dimensionIndex] - startPoint[dimensionIndex])
+    this.drawer.drawLine(startPoint, tailDestinationPoint, this.data.color, this.data.width)
 
-        if (length < lineLength) {
-            if (tailDestinationPoint[dimensionIndex] < startPoint[dimensionIndex]) {
-                tailDestinationPoint[dimensionIndex] = startPoint[dimensionIndex] - length
-            } else {
-                tailDestinationPoint[dimensionIndex] = startPoint[dimensionIndex] + length
-            }
-            lineLength = length
-        }
+    return length - lineLength
+  }
 
-        this.drawer.drawLine(startPoint, tailDestinationPoint, data.color, data.width)
+  drawWorm() {
+    let line
+    let startPoint = this.head
+    let length = this.data.length
 
-        return length - lineLength
+    if (this.data.drawHead === true) {
+      this.drawer.drawPoint(this.head, this.data.color, this.data.width)
     }
 
-    drawWorm() {
-        let line
-        let startPoint = this.head
-        let length = this.data.length
+    line = this.choseTheLineThanHeadLiesOn(startPoint)
 
-        if (this.data.drawHead === true) {
-            this.drawer.drawPoint(this.head, this.data.color, this.data.width)
-        }
+    // console.log('l: ' + line)
 
-        line = this.choseTheLineThanHeadLiesOn(startPoint)
+    while ((length = this.drawWormLine(startPoint, line, length)) > 0) {
+      startPoint = line[0].slice()
+      line = this.choseLineWhichEndsOn(startPoint)
 
-        // console.log('l: ' + line)
+      // console.log('len: ' + length)
+      // console.log('sp: ' + startPoint)
+      // console.log('ln: ' + line)
+    }
+  }
 
-        while ((length = this.drawWormLine(startPoint, line, length)) > 0) {
-            startPoint = line[0].slice()
-            line = this.choseLineWhichEndsOn(startPoint)
+  pointOnLine(A, B, H) {
+    return A <= H && H <= B || A >= H && H >= B;
+  }
 
-            // console.log('len: ' + length)
-            // console.log('sp: ' + startPoint)
-            // console.log('ln: ' + line)
-        }
+  pointOnOppositeEnd(line) {
+    return line[0].slice()
+  }
+
+  getDimensionIndex(line) {
+    if (line[0][0] === line[1][0]) {
+      return 1
+    }
+    return 0
+  }
+
+  step() {
+    this.getNewHeadPoint()
+  }
+
+  newHeadCalculation(head, line, step) {
+    let dest = line[1]
+    let dimensionIndex = this.getDimensionIndex(line)
+    let lineLength = Math.abs(dest[dimensionIndex] - head[dimensionIndex])
+
+    // console.log('line: ' + line)
+    // console.log('head: ' + head)
+    // console.log('step: ' + step)
+    // console.log('dimensionIndex: ' + dimensionIndex)
+    // console.log('lineLength: ' + lineLength)
+
+    if (step <= lineLength) {
+      if (dest[dimensionIndex] < head[dimensionIndex]) {
+        head[dimensionIndex] = head[dimensionIndex] - step
+      } else {
+        head[dimensionIndex] = head[dimensionIndex] + step
+      }
+      lineLength = step
+    } else {
+      head[dimensionIndex] = dest[dimensionIndex]
     }
 
-    pointOnLine(A, B, H) {
-        return A <= H && H <= B || A >= H && H >= B;
+    // console.log('head: ' + head)
+
+    return step - lineLength
+  }
+
+  getNewHeadPoint() {
+
+    // console.log('h: ' + head)
+    // console.log('s: ' + step)
+
+    let line = this.choseTheLineThanHeadLiesOn(this.head)
+
+    // console.log('lll: ' + line)
+
+    let i = 1
+    let last = false
+    let s = this.data.step
+
+    while (last === false) {
+
+      s = this.newHeadCalculation(this.head, line, s)
+
+      if (s === 0) {
+        last = true
+      } else {
+        line = this.choseLineWhichStartsOn(line[1])
+      }
+
+      if (++i > 10) {
+        break
+      }
     }
+  }
 
-    pointOnOppositeEnd(line) {
-        return line[0].slice()
+  drawPathPoints() {
+    for (let key in this.data.path) {
+      let point = this.data.path[key]
+      this.drawer.drawPoint(point, "red")
     }
-
-    getDimensionIndex(line) {
-        if (line[0][0] === line[1][0]) {
-            return 1
-        }
-        return 0
-    }
-
-    step() {
-        this.getNewHeadPoint()
-    }
-
-    newHeadCalculation(head, line, step) {
-        let dest = line[1]
-        let dimensionIndex = this.getDimensionIndex(line)
-        let lineLength = Math.abs(dest[dimensionIndex] - head[dimensionIndex])
-
-        // console.log('line: ' + line)
-        // console.log('head: ' + head)
-        // console.log('step: ' + step)
-        // console.log('dimensionIndex: ' + dimensionIndex)
-        // console.log('lineLength: ' + lineLength)
-
-        if (step <= lineLength) {
-            if (dest[dimensionIndex] < head[dimensionIndex]) {
-                head[dimensionIndex] = head[dimensionIndex] - step
-            } else {
-                head[dimensionIndex] = head[dimensionIndex] + step
-            }
-            lineLength = step
-        } else {
-            head[dimensionIndex] = dest[dimensionIndex]
-        }
-
-        // console.log('head: ' + head)
-
-        return step - lineLength
-    }
-
-    getNewHeadPoint() {
-
-        // console.log('h: ' + head)
-        // console.log('s: ' + step)
-
-        let line = this.choseTheLineThanHeadLiesOn(this.head)
-
-        // console.log('lll: ' + line)
-
-        let i = 1
-        let last = false
-        let s = this.data.step
-
-        while(last === false) {
-
-            s = this.newHeadCalculation(this.head, line, s)
-
-            if (s === 0) {
-                last = true
-            } else {
-                line = this.choseLineWhichStartsOn(line[1])
-            }
-
-            if( ++i > 10) {
-                break
-            }
-        }
-    }
-
-    drawPathPoints() {
-        for (let key in this.data.path) {
-            let point = this.data.path[key]
-            this.drawer.drawPoint(point, "red")
-        }
-    }
+  }
 }
 
 module.exports = Worm

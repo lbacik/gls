@@ -1,10 +1,10 @@
 
-const Drawer = require('./drawer')
+const Drawer = require('./canvas-drawer')
 const Generator = require('../generator/generator')
 const Gls = require('../gls/gls')
 
 class Factory {
-  static drawer(canvas) {
+  drawer(canvas) {
     return new Drawer(canvas)
   }
 
@@ -13,8 +13,8 @@ class Factory {
     return new Gls(data, drawer)
   }
 
-  static codeGenerator() {
-    return Generator()
+  codeGenerator() {
+    return Generator
   }
 }
 

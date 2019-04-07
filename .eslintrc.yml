@@ -2,3 +2,14 @@ extends: airbnb-base
 rules:
   semi:
     - off
+  no-cond-assign:
+    - off
+  no-plusplus:
+    - off
+  prefer-destructuring:
+    - off
+  prefer-template:
+    - off
+  no-prototype-builtins:
+    - off
+

@@ -15,6 +15,7 @@ class Swarm {
   drawAndCalculateMove() {
     for (let i = 0; i < this.worms.length; i++) {
       this.worms[i].drawWorm()
+      this.worms[i].drawPathPoints()
       this.worms[i].step()
     }
   }

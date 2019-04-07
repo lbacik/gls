@@ -1,4 +1,4 @@
-const AbstractDrawer = require('../gls/abstract_drawer')
+const AbstractDrawer = require('../gls/abstract-drawer')
 
 class CanvasDrawer extends AbstractDrawer {
   constructor(canvas) {

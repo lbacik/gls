@@ -1,9 +1,9 @@
 {
   "name": "@lbacik/gls",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Łukasz Bacik <mail@luka.sh> (http://luka.sh)",
   "license": "LGPL-2.1-or-later",
-  "main": "",
+  "main": "src/infrastructure/factory.js",
   "dependencies": {},
   "devDependencies": {
     "eslint": "^5.13.0",

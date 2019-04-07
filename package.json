@@ -1,18 +1,25 @@
 {
   "name": "@lbacik/gls",
-  "version": "0.0.2",
+  "version": "0.0.7",
   "author": "Łukasz Bacik <mail@luka.sh> (http://luka.sh)",
   "license": "LGPL-2.1-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lbacik/gls.git"
+  },
   "main": "src/infrastructure/factory.js",
   "dependencies": {},
   "devDependencies": {
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0"
+    "eslint-plugin-import": "^2.16.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   },
   "files": [
     "/src",
     "/tests",
+    "/dist",
     ".eslintrc.yml",
     "LICENSE",
     "package.json",
@@ -20,6 +27,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   }
 }
